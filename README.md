@@ -1,6 +1,7 @@
 # POWERSHELLSCRIPT
 script to automatically delete users in windows10/11 // script para borrrar usuarios automaticamente en windows 10/11
 instructions/instrucciones
+
 English:
 1:Open PowerShell as Administrator
 
@@ -11,6 +12,7 @@ English:
 4:Paste the full script into the console
 
 5:Verify the user folders located in C:\Users
+
 
 Español:
 1:Abre PowerShell como Administrador
