@@ -1,0 +1,37 @@
+#SCRIPT MADE BY B3TT0
+#SCRIPT PARA BORRRAR USUARIOS
+# Usuarios que no queremos tocar
+$excludeUsers = @("")
+$currentUser = $env:USERNAME
+
+# Obtener perfiles de usuario del registro
+$profiles = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\*' |
+    Where-Object {
+        $_.ProfileImagePath -notlike "*SystemProfile*" -and
+        $_.ProfileImagePath -notlike "*NetworkService*" -and
+        $_.ProfileImagePath -notlike "*LocalService*"
+    }
+
+foreach ($profile in $profiles) {
+    $profilePath = $profile.ProfileImagePath
+    $username = Split-Path $profilePath -Leaf
+    $regKey = $profile.PSChildName
+
+    if (
+        $username -and 
+        $username -notin $excludeUsers -and 
+        $username -ne $currentUser -and
+        (Test-Path "C:\Users\$username")
+    ) {
+        Write-Host "Eliminando perfil de usuario: $username" -ForegroundColor Cyan
+
+        # 1. Eliminar carpeta del usuario
+        Remove-Item -Path "C:\Users\$username" -Recurse -Force -ErrorAction SilentlyContinue
+
+        # 2. Eliminar clave del registro del perfil
+        $regPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\$regKey"
+        Remove-Item -Path $regPath -Recurse -Force -ErrorAction SilentlyContinue
+
+        Write-Host "Perfil eliminado: $username" -ForegroundColor Green
+    }
+}
